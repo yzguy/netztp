@@ -17,6 +17,21 @@ log_destination = {
     'level': 'DEBUG'
 }
 
+# Process (https://ztpserver.readthedocs.io/en/master/api.html)
+# GET /eos/ztp/bootstrap HTTP/1.1 200 -
+# GET /eos/ztp/bootstrap/config HTTP/1.1 200 -
+# POST /eos/ztp/nodes HTTP/1.1 409 -
+# GET /eos/ztp/nodes/<serial> HTTP/1.1 200 -
+# GET /eos/ztp/actions/install_image HTTP/1.1 200 -
+# GET /firmware/<firmware> HTTP/1.1 200
+# GET /eos/ztp/actions/replace_config HTTP/1.1 200 -
+# GET /eos/ztp/nodes/<serial>/startup-config HTTP/1.1 200 -
+# GET /eos/ztp/meta/nodes/<serial>/startup-config HTTP/1.1 200 -
+# GET /eos/ztp/actions/copy_file HTTP/1.1 200 -
+# GET /eos/ztp/<serial>/ztp_finished HTTP/1.1 200 -
+# GET /eos/ztp/meta/<serial>/ztp_finished HTTP/1.1 200 -
+
+
 # First Step: DHCP tells EOS to request bootstrap
 @bp.route('/ztp/bootstrap')
 def ztp_bootstrap():
@@ -37,26 +52,25 @@ def ztp_bootstrap_config():
 @bp.route('/ztp/nodes', methods=['POST'])
 def ztp_nodes():
     # vEOS does not have serial number
-    '''
-    {
-    	"neighbors": {
-    		"Management1": [{
-    			"device": "b4fb.e488.56de",
-    			"port": "0/6"
-    		}]
-    	},
-    	"version": "4.21.8M",
-    	"systemmac": "00:0c:29:a0:de:4d",
-    	"model": "vEOS",
-    	"serialnumber": ""
-    }
-    '''
+    # {
+    # 	"neighbors": {
+    # 		"Management1": [{
+    # 			"device": "b4fb.e488.56de",
+    # 			"port": "0/6"
+    # 		}]
+    # 	},
+    # 	"version": "4.21.8M",
+    # 	"systemmac": "00:0c:29:a0:de:4d",
+    # 	"model": "vEOS",
+    # 	"serialnumber": ""
+    # }
+
     # Lookup device by serial number
     # If no device is found, lookup by MAC Address
     serialnum = request.json['serialnumber']
     if not serialnum:
         serialnum = request.json['systemmac'].replace(':', '')
-    return redirect(url_for('eos.ztp_nodes_serial', serialnum=serialnum)), 409
+    return redirect(url_for('eos.ztp_nodes_serial', serialnum=serialnum)), 201
 
 # Fourth Step: We give EOS actions to do, actions are from ztpserver
 # install_image - download and install specific firmware
