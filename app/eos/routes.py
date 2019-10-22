@@ -1,8 +1,8 @@
 from flask import make_response, jsonify, request, url_for, redirect
+from app.eos.util import response_with_content_type, generate_checksum
 from app.eos import bp
 
 from datetime import datetime
-import hashlib
 
 startup_config = '''
 hostname veos.lab
@@ -12,25 +12,30 @@ username admin privilege 15 role network-admin secret admin
 end
 '''
 
+log_destination = {
+    'destination': '192.168.50.2:514',
+    'level': 'DEBUG'
+}
+
 # First Step: DHCP tells EOS to request bootstrap
 @bp.route('/ztp/bootstrap')
 def ztp_bootstrap():
     # TODO: Need to replace $SERVER dynamically
-    response = make_response(bp.send_static_file('bootstrap'))
-    response.headers['Content-Type'] = 'text/x-python'
-    return response
+    resp = bp.send_static_file('bootstrap')
+    return response_with_content_type(resp, 'text/x-python')
 
 # Second Step: Bootstrap tells EOS to request config
 @bp.route('/ztp/bootstrap/config')
 def ztp_bootstrap_config():
     return jsonify({
         'xmpp': {},
-        'logging': []
+        'logging': [{}]
     })
 
 # Third Step: EOS POSTs information
 @bp.route('/ztp/nodes', methods=['POST'])
 def ztp_nodes():
+    # vEOS does not have serial number
     '''
     {
     	"neighbors": {
@@ -66,7 +71,7 @@ def ztp_nodes_serial(serialnum):
     #     'actions': []
     # }), 404
 
-    # Upgrade Software Action if firmware set
+    # Upgrade Software Action
     actions.append({
         'name': 'Upgrade Operating System',
         'action': 'install_image',
@@ -107,71 +112,39 @@ def ztp_nodes_serial(serialnum):
 # Node retrieves install_image action file
 @bp.route('/ztp/actions/install_image')
 def ztp_actions_install_image():
-    response = make_response(bp.send_static_file('actions/install_image'))
-    response.headers['Content-Type'] = 'text/x-python'
-    return response
-
-# Node retrieves new firmware
-# @bp.route('/ztp/files/images/vEOS-lab-4.22.2.1F.swi')
-# def file_images():
-#     response = make_response(bp.send_static_file('files/images/vEOS-lab-4.22.2.1F.swi'))
-#     response.headers['Content-Type'] = 'application/vnd.aristanetworks.swi'
-#     return response
-
-# Node retrieves checksum for SWI
-# @bp.route('/meta/files/images/<firmware>')
-# def meta_firmware(firmware):
-#     checksums = {
-#         'md5': '3347e6e0ab6c33cd608e6067364485c6',
-#         'sha512': '57def8fc84b1d3c808ab617ca4e8ccb3430dddba34b421f63203de78cbff05dbd15d15d39a4d10c0bf1c5cc8f032775b277d7d84dab7788f8c856350bdfe3d7c'
-#     }
-#     return checksums['md5']
+    resp = bp.send_static_file('actions/install_image')
+    return response_with_content_type(resp, 'text/x-python')
 
 # Node retrieves replace_config action file
 @bp.route('/ztp/actions/replace_config')
 def ztp_actions_replace_config():
-    response = make_response(bp.send_static_file('actions/replace_config'))
-    response.headers['Content-Type'] = 'text/x-python'
-    return response
+    resp = bp.send_static_file('actions/replace_config')
+    return response_with_content_type(resp, 'text/x-python')
 
 # Node retreives device-specific startup-config
 @bp.route('/ztp/nodes/<serialnum>/startup-config')
 def ztp_startup_config(serialnum):
-    response = make_response(startup_config)
-    response.headers['Content-Type'] = 'text/plain'
-    return response
+    return response_with_content_type(startup_config, 'text/plain')
 
 # Node retrieves checksum for startup-config
 @bp.route('/ztp/meta/nodes/<serial>/startup-config')
 def meta_serial_startup_config(serial):
-    checksum = hashlib.sha1(startup_config.encode('utf-8')).hexdigest()
-    size = len(startup_config)
-    return jsonify({
-        'sha1': checksum,
-        'size': size
-    })
+    return jsonify(generate_checksum(startup_config))
 
 # Node retrieves copy_file action file
 @bp.route('/ztp/actions/copy_file')
 def ztp_actions_copy_file():
-    response = make_response(bp.send_static_file('actions/copy_file'))
-    response.headers['Content-Type'] = 'text/x-python'
-    return response
+    resp = bp.send_static_file('actions/copy_file')
+    return response_with_content_type(resp, 'text/x-python')
 
 # Node retrieves the time it finished ZTP
 @bp.route('/ztp/<serialnum>/ztp_finished')
 def ztp_serial_ztp_finished(serialnum):
-    now = datetime.now().strftime('%F %T')
-    response = make_response('finished')
-    response.headers['Content-Type'] = 'text/plain'
-    return response
+    # TODO: send ZTP finish time. Need to make it persistent across requests
+    #now = datetime.now().strftime('%F %T')
+    return response_with_content_type('finished', 'text/plain')
 
 # Node retrieves checksum for ZTP finish time
 @bp.route('/ztp/meta/<serialnum>/ztp_finished')
 def meta_serial_ztp_finished(serialnum):
-    checksum = hashlib.sha1('finished'.encode('utf-8')).hexdigest()
-    size = len('finished')
-    return jsonify({
-        'sha1': checksum,
-        'size': size
-    })
+    return jsonify(generate_checksum('finished'))
