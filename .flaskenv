@@ -1,0 +1,2 @@
+FLASK_APP=netztp.py
+FLASK_DEBUG=1
