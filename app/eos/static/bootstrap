@@ -64,7 +64,8 @@ from urlparse import urlsplit, urlunsplit
 
 # Server will replace this value with the correct IP address/hostname
 # before responding to the bootstrap request.
-SERVER = '$SERVER'
+#SERVER = '$SERVER'
+SERVER = 'http://192.168.50.74:5000/eos/ztp'
 
 LOGGING_FACILITY = 'ztpbootstrap'
 SYSLOG = '/dev/log'
