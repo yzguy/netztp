@@ -21,16 +21,17 @@ log_destination = {
 @bp.route('/ztp/bootstrap')
 def ztp_bootstrap():
     # TODO: Need to replace $SERVER dynamically
-    resp = bp.send_static_file('bootstrap')
-    return response_with_content_type(resp, 'text/x-python')
+    file = bp.send_static_file('bootstrap')
+    return response_with_content_type(file, 'text/x-python')
 
 # Second Step: Bootstrap tells EOS to request config
 @bp.route('/ztp/bootstrap/config')
 def ztp_bootstrap_config():
-    return jsonify({
-        'xmpp': {},
-        'logging': [{}]
-    })
+    return jsonify({})
+    #return jsonify({
+    #   'xmpp': {},
+    #   'logging': [log_destination]
+    #})
 
 # Third Step: EOS POSTs information
 @bp.route('/ztp/nodes', methods=['POST'])
@@ -52,8 +53,10 @@ def ztp_nodes():
     '''
     # Lookup device by serial number
     # If no device is found, lookup by MAC Address
-    systemmac = request.json['systemmac'].replace(':', '')
-    return redirect(url_for('eos.ztp_nodes_serial', serialnum=systemmac)), 409
+    serialnum = request.json['serialnumber']
+    if not serialnum:
+        serialnum = request.json['systemmac'].replace(':', '')
+    return redirect(url_for('eos.ztp_nodes_serial', serialnum=serialnum)), 409
 
 # Fourth Step: We give EOS actions to do, actions are from ztpserver
 # install_image - download and install specific firmware
@@ -112,14 +115,14 @@ def ztp_nodes_serial(serialnum):
 # Node retrieves install_image action file
 @bp.route('/ztp/actions/install_image')
 def ztp_actions_install_image():
-    resp = bp.send_static_file('actions/install_image')
-    return response_with_content_type(resp, 'text/x-python')
+    file = bp.send_static_file('actions/install_image')
+    return response_with_content_type(file, 'text/x-python')
 
 # Node retrieves replace_config action file
 @bp.route('/ztp/actions/replace_config')
 def ztp_actions_replace_config():
-    resp = bp.send_static_file('actions/replace_config')
-    return response_with_content_type(resp, 'text/x-python')
+    file = bp.send_static_file('actions/replace_config')
+    return response_with_content_type(file, 'text/x-python')
 
 # Node retreives device-specific startup-config
 @bp.route('/ztp/nodes/<serialnum>/startup-config')
@@ -134,8 +137,8 @@ def meta_serial_startup_config(serial):
 # Node retrieves copy_file action file
 @bp.route('/ztp/actions/copy_file')
 def ztp_actions_copy_file():
-    resp = bp.send_static_file('actions/copy_file')
-    return response_with_content_type(resp, 'text/x-python')
+    file = bp.send_static_file('actions/copy_file')
+    return response_with_content_type(file, 'text/x-python')
 
 # Node retrieves the time it finished ZTP
 @bp.route('/ztp/<serialnum>/ztp_finished')
