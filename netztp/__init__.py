@@ -8,4 +8,7 @@ def create_app(config_class=Config):
     from netztp.eos import bp as eos
     app.register_blueprint(eos, url_prefix='/eos')
 
+    from netztp.opengear import bp as opengear
+    app.register_blueprint(opengear, url_prefix='/opengear')
+
     return app

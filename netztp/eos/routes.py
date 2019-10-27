@@ -1,5 +1,5 @@
 from flask import make_response, jsonify, request, url_for, redirect, abort
-from netztp.eos.util import response_with_content_type, generate_checksum
+from netztp.util import response_with_content_type, generate_checksum
 from netztp.eos import bp
 
 from datetime import datetime

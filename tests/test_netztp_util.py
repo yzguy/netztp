@@ -1,10 +1,10 @@
 from unittest import TestCase
 from netztp import create_app
-from netztp.eos.util import response_with_content_type, generate_checksum
+from netztp.util import response_with_content_type, generate_checksum
 
 from config import TestConfig
 
-class TestEOSUtil(TestCase):
+class TestUtil(TestCase):
     def setUp(self):
         self.app = create_app(TestConfig)
         self.app_context = self.app.app_context()
