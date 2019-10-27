@@ -1,0 +1,23 @@
+! Command: show running-config
+! device: {{ device.hostname }}
+!
+hostname {{ device.hostname }}
+ip domain-name {{ device.domain_name }}
+!
+username admin privilege 15 role network-admin secret admin
+!
+interface Ethernet1
+  shutdown
+!
+interface Ethernet2
+  shutdown
+!
+interface Ethernet3
+  shutdown
+!
+interface Management1
+  ip address {{ device.ip_address }} {{ subnet_mask }}
+!
+ip route 0.0.0.0 0.0.0.0 {{ gateway }}
+!
+end

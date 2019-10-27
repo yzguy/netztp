@@ -1,6 +1,7 @@
 from flask import Blueprint
 
-bp = Blueprint('eos', __name__, static_folder='static')
+bp = Blueprint('eos', __name__, static_folder='static',
+                                template_folder='templates')
 
 from netztp.eos import routes
 

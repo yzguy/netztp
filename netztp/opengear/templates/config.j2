@@ -1,0 +1,14 @@
+!/bin/bash
+
+# Configure networking
+config -s config.interfaces.wan.mode=static
+config -s config.interfaces.wan.address={{ device.ip_address }}
+config -s config.interfaces.wan.netmask={{ device.subnet_mask }}
+config -s config.interfaces.wan.gateway={{ device.gateway }}
+
+# Configure hostname
+config -s config.system.name={{ device.hostname }}.{{ device.domain_name }}
+
+# Schedule configurators and reboot
+touch /etc/config/.run_configurators
+reboot

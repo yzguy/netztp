@@ -3,13 +3,15 @@ class Inventory(object):
 
     DATA = {
         'abc123': {
-            'hostname': 'abc123.yzguy.io',
+            'hostname': 'abc123',
+            'domain_name': 'yzguy.io',
             'ip_address': '192.168.50.200',
             'subnet_mask': '255.255.255.0',
             'gateway': '192.168.50.1'
         },
         '123abc': {
-            'hostname': '123abc.yzguy.io',
+            'hostname': '123abc',
+            'domain_name': 'yzguy.io',
             'ip_address': '192.168.50.201',
             'subnet_mask': '255.255.255.0',
             'gateway': '192.168.50.1'

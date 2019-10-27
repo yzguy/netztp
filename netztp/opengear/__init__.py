@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-bp = Blueprint('opengear', __name__)
+bp = Blueprint('opengear', __name__, template_folder='templates')
 
 from netztp.opengear import routes
 
