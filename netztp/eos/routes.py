@@ -94,7 +94,7 @@ def ztp_nodes_serial(serialnum):
         'name': 'Upgrade Operating System',
         'action': 'install_image',
         'attributes': {
-            'url': 'http://192.168.50.74:8000/firmware/vEOS-lab-4.22.2.1F.swi',
+            'url': 'http://ztp.yzguy.io:8000/firmware/vEOS-lab-4.22.2.1F.swi',
             'version': '4.22.2.1F'
         },
         'always_execute': True
