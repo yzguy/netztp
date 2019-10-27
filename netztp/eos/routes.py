@@ -1,8 +1,9 @@
-from flask import make_response, jsonify, request, url_for, redirect
+from flask import make_response, jsonify, request, url_for, redirect, abort
 from netztp.eos.util import response_with_content_type, generate_checksum
 from netztp.eos import bp
 
 from datetime import datetime
+import os
 
 startup_config = '''
 hostname veos.lab
@@ -20,7 +21,7 @@ log_destination = {
 # Process (https://ztpserver.readthedocs.io/en/master/api.html)
 # GET /eos/ztp/bootstrap HTTP/1.1 200 -
 # GET /eos/ztp/bootstrap/config HTTP/1.1 200 -
-# POST /eos/ztp/nodes HTTP/1.1 409 -
+# POST /eos/ztp/nodes HTTP/1.1 201 -
 # GET /eos/ztp/nodes/<serial> HTTP/1.1 200 -
 # GET /eos/ztp/actions/install_image HTTP/1.1 200 -
 # GET /firmware/<firmware> HTTP/1.1 200
@@ -126,17 +127,15 @@ def ztp_nodes_serial(serialnum):
         'actions': actions
     })
 
-# Node retrieves install_image action file
-@bp.route('/ztp/actions/install_image')
-def ztp_actions_install_image():
-    file = bp.send_static_file('actions/install_image')
-    return response_with_content_type(file, 'text/x-python')
+# Node retrieves specific action file
+@bp.route('/ztp/actions/<action>')
+def ztp_actions_all(action):
+    actions = os.listdir(os.path.join(bp.static_folder, 'actions'))
+    if action in actions:
+        file = bp.send_static_file(f'actions/{action}')
+        return response_with_content_type(file, 'text/x-python')
 
-# Node retrieves replace_config action file
-@bp.route('/ztp/actions/replace_config')
-def ztp_actions_replace_config():
-    file = bp.send_static_file('actions/replace_config')
-    return response_with_content_type(file, 'text/x-python')
+    return 'Action not found', 404
 
 # Node retreives device-specific startup-config
 @bp.route('/ztp/nodes/<serialnum>/startup-config')
@@ -147,12 +146,6 @@ def ztp_startup_config(serialnum):
 @bp.route('/ztp/meta/nodes/<serial>/startup-config')
 def meta_serial_startup_config(serial):
     return jsonify(generate_checksum(startup_config))
-
-# Node retrieves copy_file action file
-@bp.route('/ztp/actions/copy_file')
-def ztp_actions_copy_file():
-    file = bp.send_static_file('actions/copy_file')
-    return response_with_content_type(file, 'text/x-python')
 
 # Node retrieves the time it finished ZTP
 @bp.route('/ztp/<serialnum>/ztp_finished')
