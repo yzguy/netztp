@@ -1,15 +1,34 @@
 from flask import make_response, jsonify, request, url_for, redirect, abort
 from netztp.util import response_with_content_type, generate_checksum
+from netztp import inventory
 from netztp.eos import bp
 
 from datetime import datetime
 import os
 
 startup_config = '''
-hostname veos.lab
-ip domain-name yzguy.io
+! Command: show running-config
+! device: {hostname}
+!
+hostname {hostname}
+ip domain-name {domain_name}
 !
 username admin privilege 15 role network-admin secret admin
+!
+interface Ethernet1
+  shutdown
+!
+interface Ethernet2
+  shutdown
+!
+interface Ethernet3
+  shutdown
+!
+interface Management1
+  ip address {ip_address} {subnet_mask}
+!
+ip route 0.0.0.0 0.0.0.0 {gateway}
+!
 end
 '''
 
@@ -140,12 +159,26 @@ def ztp_actions_all(action):
 # Node retreives device-specific startup-config
 @bp.route('/ztp/nodes/<serialnum>/startup-config')
 def ztp_startup_config(serialnum):
-    return response_with_content_type(startup_config, 'text/plain')
+    device = inventory.device(serialnum)
+    return response_with_content_type(startup_config.format(
+        hostname=device['hostname'],
+        domain_name=device['domain_name'],
+        ip_address=device['ip_address'],
+        subnet_mask=device['subnet_mask'],
+        gateway=device['gateway']
+    ), 'text/plain')
 
 # Node retrieves checksum for startup-config
-@bp.route('/ztp/meta/nodes/<serial>/startup-config')
-def meta_serial_startup_config(serial):
-    return jsonify(generate_checksum(startup_config))
+@bp.route('/ztp/meta/nodes/<serialnum>/startup-config')
+def meta_serial_startup_config(serialnum):
+    device = inventory.device(serialnum)
+    return jsonify(generate_checksum(startup_config.format(
+        hostname=device['hostname'],
+        domain_name=device['domain_name'],
+        ip_address=device['ip_address'],
+        subnet_mask=device['subnet_mask'],
+        gateway=device['gateway']
+    )))
 
 # Node retrieves the time it finished ZTP
 @bp.route('/ztp/<serialnum>/ztp_finished')

@@ -1,5 +1,6 @@
 from netztp.util import response_with_content_type
 from netztp.opengear import bp
+from netztp import inventory
 
 configuration_script = '''!/bin/bash
 
@@ -19,9 +20,10 @@ reboot
 
 @bp.route('/ztp/mac/<mac>/config.sh')
 def ztp_config_mac(mac):
+    device = inventory.device(mac)
     return response_with_content_type(configuration_script.format(
-        ip_address='192.168.50.100',
-        subnet_mask='255.255.255.0',
-        gateway='192.168.50.1',
-        hostname='opengear'
+        ip_address=device['ip_address'],
+        subnet_mask=device['subnet_mask'],
+        gateway=device['gateway'],
+        hostname=device['hostname']
     ), 'text/plain')
