@@ -1,5 +1,5 @@
 from unittest import TestCase
-from app.eos.util import response_with_content_type, generate_checksum
+from netztp.eos.util import response_with_content_type, generate_checksum
 
 class TestEOSUtil(TestCase):
     def test_generate_checksum(self):

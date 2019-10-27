@@ -1,6 +1,6 @@
 from flask import make_response, jsonify, request, url_for, redirect
-from app.eos.util import response_with_content_type, generate_checksum
-from app.eos import bp
+from netztp.eos.util import response_with_content_type, generate_checksum
+from netztp.eos import bp
 
 from datetime import datetime
 
