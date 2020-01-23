@@ -5,12 +5,24 @@ from app.eos import bp
 from datetime import datetime
 
 startup_config = '''
-hostname veos.lab
+hostname sw1.lab
 ip domain-name yzguy.io
 !
 username admin privilege 15 role network-admin secret admin
+
+interface Management1
+  ip address 192.168.50.120/24
+
+ip route 0.0.0.0/0 192.168.50.1
 end
 '''
+
+bash_commands = '''
+FastCli -p 15 -c "
+extension Aboot-patch-419257.i686.rpm"
+'''
+
+cli_commands = ''
 
 log_destination = {
     'destination': '192.168.50.2:514',
@@ -42,11 +54,11 @@ def ztp_bootstrap():
 # Second Step: Bootstrap tells EOS to request config
 @bp.route('/ztp/bootstrap/config')
 def ztp_bootstrap_config():
-    return jsonify({})
-    #return jsonify({
-    #   'xmpp': {},
-    #   'logging': [log_destination]
-    #})
+    #return jsonify({})
+    return jsonify({
+      'xmpp': {},
+      'logging': [log_destination]
+    })
 
 # Third Step: EOS POSTs information
 @bp.route('/ztp/nodes', methods=['POST'])
@@ -93,11 +105,32 @@ def ztp_nodes_serial(serialnum):
         'name': 'Upgrade Operating System',
         'action': 'install_image',
         'attributes': {
-            'url': 'http://192.168.50.74:8000/firmware/vEOS-lab-4.22.2.1F.swi',
-            'version': '4.22.2.1F'
+            'url': 'http://192.168.50.74:8000/firmware/EOS-4.21.8M.swi',
+            'version': '4.21.8M'
         },
         'always_execute': True
     })
+
+    # # Install Aboot extension
+    # actions.append({
+    #     'name': 'Install Aboot extension',
+    #     'action': 'install_extension',
+    #     'attributes': {
+    #         'url': 'http://192.168.50.74:8000/firmware/Aboot-patch-419257.i686.rpm',
+    #     },
+    #     'always_execute': True
+    # })
+    #
+    # # Actually Install Aboot extension
+    # actions.append({
+    #     'name': 'Actually Install Aboot extension',
+    #     'action': 'run_bash_script',
+    #     'attributes': {
+    #         'url': '/bash_commands'
+    #     },
+    #     'always_execute': True
+    # })
+
     # Get rendered configuration
     actions.append({
         'name': 'Install static startup-config file',
@@ -107,6 +140,7 @@ def ztp_nodes_serial(serialnum):
         },
         'always_execute': True
     })
+
     # ZTP Finished Action
     actions.append({
         'name': 'Signal ZTP Completion',
@@ -131,6 +165,32 @@ def ztp_nodes_serial(serialnum):
 def ztp_actions_install_image():
     file = bp.send_static_file('actions/install_image')
     return response_with_content_type(file, 'text/x-python')
+
+# Node retrieves install_extension action file
+@bp.route('/ztp/actions/install_extension')
+def ztp_actions_install_extension():
+    file = bp.send_static_file('actions/install_extension')
+    return response_with_content_type(file, 'text/x-python')
+
+# Node retrieves run_bash_script action file
+@bp.route('/ztp/actions/run_bash_script')
+def ztp_actions_run_bash_script():
+    file = bp.send_static_file('actions/run_bash_script')
+    return response_with_content_type(file, 'text/x-python')
+
+@bp.route('/ztp/bash_commands')
+def ztp_bash_commands():
+    return response_with_content_type(bash_commands, 'text/plain')
+
+# Node retrieves run_cli_commands action file
+@bp.route('/ztp/actions/run_cli_commands')
+def ztp_actions_run_cli_commands():
+    file = bp.send_static_file('actions/run_cli_commands')
+    return response_with_content_type(file, 'text/x-python')
+
+@bp.route('/ztp/cli_commands')
+def ztp_cli_commands():
+    return response_with_content_type(cli_commands, 'text/plain')
 
 # Node retrieves replace_config action file
 @bp.route('/ztp/actions/replace_config')
