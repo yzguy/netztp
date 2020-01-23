@@ -1,3 +1,7 @@
 *.pyc
 venv/
+.coverage
+coverage.xml
+htmlcov/
+nosetests.xml
 app/eos/static/files

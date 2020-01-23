@@ -1,21 +1,11 @@
-from flask import make_response, jsonify, request, url_for, redirect
-from app.eos.util import response_with_content_type, generate_checksum
-from app.eos import bp
+from flask import make_response, jsonify, request, url_for, redirect, abort, \
+    render_template
+from netztp.util import response_with_content_type, generate_checksum
+from netztp import inventory
+from netztp.eos import bp
 
 from datetime import datetime
-
-startup_config = '''
-hostname sw1.lab
-ip domain-name yzguy.io
-!
-username admin privilege 15 role network-admin secret admin
-
-interface Management1
-  ip address 192.168.50.120/24
-
-ip route 0.0.0.0/0 192.168.50.1
-end
-'''
+import os
 
 bash_commands = '''
 FastCli -p 15 -c "
@@ -32,7 +22,7 @@ log_destination = {
 # Process (https://ztpserver.readthedocs.io/en/master/api.html)
 # GET /eos/ztp/bootstrap HTTP/1.1 200 -
 # GET /eos/ztp/bootstrap/config HTTP/1.1 200 -
-# POST /eos/ztp/nodes HTTP/1.1 409 -
+# POST /eos/ztp/nodes HTTP/1.1 201 -
 # GET /eos/ztp/nodes/<serial> HTTP/1.1 200 -
 # GET /eos/ztp/actions/install_image HTTP/1.1 200 -
 # GET /firmware/<firmware> HTTP/1.1 200
@@ -105,7 +95,7 @@ def ztp_nodes_serial(serialnum):
         'name': 'Upgrade Operating System',
         'action': 'install_image',
         'attributes': {
-            'url': 'http://192.168.50.74:8000/firmware/EOS-4.21.8M.swi',
+            'url': 'http://ztp.yzguy.io:8000/firmware/EOS-4.21.8M.swi',
             'version': '4.21.8M'
         },
         'always_execute': True
@@ -160,59 +150,36 @@ def ztp_nodes_serial(serialnum):
         'actions': actions
     })
 
-# Node retrieves install_image action file
-@bp.route('/ztp/actions/install_image')
-def ztp_actions_install_image():
-    file = bp.send_static_file('actions/install_image')
-    return response_with_content_type(file, 'text/x-python')
+# Node retrieves specific action file
+@bp.route('/ztp/actions/<action>')
+def ztp_actions_all(action):
+    actions = os.listdir(os.path.join(bp.static_folder, 'actions'))
+    if action in actions:
+        file = bp.send_static_file(f'actions/{action}')
+        return response_with_content_type(file, 'text/x-python')
 
-# Node retrieves install_extension action file
-@bp.route('/ztp/actions/install_extension')
-def ztp_actions_install_extension():
-    file = bp.send_static_file('actions/install_extension')
-    return response_with_content_type(file, 'text/x-python')
-
-# Node retrieves run_bash_script action file
-@bp.route('/ztp/actions/run_bash_script')
-def ztp_actions_run_bash_script():
-    file = bp.send_static_file('actions/run_bash_script')
-    return response_with_content_type(file, 'text/x-python')
+    return 'Action not found', 404
 
 @bp.route('/ztp/bash_commands')
 def ztp_bash_commands():
     return response_with_content_type(bash_commands, 'text/plain')
 
-# Node retrieves run_cli_commands action file
-@bp.route('/ztp/actions/run_cli_commands')
-def ztp_actions_run_cli_commands():
-    file = bp.send_static_file('actions/run_cli_commands')
-    return response_with_content_type(file, 'text/x-python')
-
 @bp.route('/ztp/cli_commands')
 def ztp_cli_commands():
     return response_with_content_type(cli_commands, 'text/plain')
 
-# Node retrieves replace_config action file
-@bp.route('/ztp/actions/replace_config')
-def ztp_actions_replace_config():
-    file = bp.send_static_file('actions/replace_config')
-    return response_with_content_type(file, 'text/x-python')
-
 # Node retreives device-specific startup-config
 @bp.route('/ztp/nodes/<serialnum>/startup-config')
 def ztp_startup_config(serialnum):
-    return response_with_content_type(startup_config, 'text/plain')
+    device = inventory.device(serialnum)
+    return response_with_content_type(render_template('eos.j2', device=device),
+                                      'text/plain')
 
 # Node retrieves checksum for startup-config
-@bp.route('/ztp/meta/nodes/<serial>/startup-config')
-def meta_serial_startup_config(serial):
-    return jsonify(generate_checksum(startup_config))
-
-# Node retrieves copy_file action file
-@bp.route('/ztp/actions/copy_file')
-def ztp_actions_copy_file():
-    file = bp.send_static_file('actions/copy_file')
-    return response_with_content_type(file, 'text/x-python')
+@bp.route('/ztp/meta/nodes/<serialnum>/startup-config')
+def meta_serial_startup_config(serialnum):
+    device = inventory.device(serialnum)
+    return jsonify(generate_checksum(render_template('eos.j2', device=device)))
 
 # Node retrieves the time it finished ZTP
 @bp.route('/ztp/<serialnum>/ztp_finished')
