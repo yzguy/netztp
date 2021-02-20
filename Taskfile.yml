@@ -1,0 +1,15 @@
+version: '3'
+
+vars:
+  DOCKER_IMAGE: registry.yzguy.io/netztp
+  GIT_COMMIT:
+    sh: git log -n 1 --format=%h
+
+tasks:
+  build:
+    cmds:
+      - docker build -t {{ .DOCKER_IMAGE }}:{{ .GIT_COMMIT }} .
+
+  push:
+    cmds:
+      - docker push {{ .DOCKER_IMAGE }}:{{ .GIT_COMMIT }}

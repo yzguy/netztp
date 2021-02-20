@@ -65,7 +65,7 @@ from urlparse import urlsplit, urlunsplit
 # Server will replace this value with the correct IP address/hostname
 # before responding to the bootstrap request.
 #SERVER = '$SERVER'
-SERVER = 'http://ztp.yzguy.io:5000/eos/ztp'
+SERVER = 'https://ztp.yzguy.io/eos/ztp'
 
 LOGGING_FACILITY = 'ztpbootstrap'
 SYSLOG = '/dev/log'
