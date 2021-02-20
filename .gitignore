@@ -4,4 +4,6 @@ venv/
 coverage.xml
 htmlcov/
 nosetests.xml
+__pycache__
 app/eos/static/files
+
