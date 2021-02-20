@@ -1,12 +1,14 @@
 from flask import Flask
-from netztp.config import Config
 from netztp.inventory import Inventory
+
+import os
 
 inventory = Inventory()
 
-def create_app(config_class=Config):
+def create_app():
     app = Flask(__name__)
-    app.config.from_object(config_class)
+    netztp_env = os.getenv('NETZTP_ENV', 'DEFAULT').capitalize()
+    app.config.from_object(f'netztp.config.{netztp_env}')
 
     inventory.authenticate(app.config['INVENTORY_API_TOKEN'])
 

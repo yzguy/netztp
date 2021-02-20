@@ -1,0 +1,7 @@
+.git/
+.gitignore
+README.md
+requirements-dev.txt
+script/
+tests/
+venv/
