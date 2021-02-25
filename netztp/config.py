@@ -12,10 +12,16 @@ class Default(object):
 
     INVENTORY_API_TOKEN = os.environ.get('INVENTORY_API_TOKEN')
 
+    LOG_DESTINATIONS = [{
+        'destination': '192.168.50.2:514',
+        'level': 'DEBUG'
+    }]
+
+    FIRMWARE_SERVER = 'https://firmware.yzguy.io'
+
 class Development(Default):
     FLASK_ENV = 'development'
     DEBUG = True
 
 class Production(Default):
     FLASK_ENV = 'production'
-

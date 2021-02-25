@@ -1,5 +1,5 @@
 from flask import make_response, jsonify, request, url_for, redirect, abort, \
-    render_template
+    render_template, current_app
 from netztp.util import response_with_content_type, generate_checksum
 from netztp import inventory
 from netztp.eos import bp
@@ -13,11 +13,6 @@ extension Aboot-patch-419257.i686.rpm"
 '''
 
 cli_commands = ''
-
-log_destination = {
-    'destination': '192.168.50.2:514',
-    'level': 'DEBUG'
-}
 
 # Process (https://ztpserver.readthedocs.io/en/master/api.html)
 # GET /eos/ztp/bootstrap HTTP/1.1 200 -
@@ -47,7 +42,7 @@ def ztp_bootstrap_config():
     #return jsonify({})
     return jsonify({
       'xmpp': {},
-      'logging': [log_destination]
+      'logging': current_app.config['LOG_DESTINATIONS']
     })
 
 # Third Step: EOS POSTs information
@@ -95,7 +90,7 @@ def ztp_nodes_serial(serialnum):
         'name': 'Upgrade Operating System',
         'action': 'install_image',
         'attributes': {
-            'url': 'http://ztp.yzguy.io:8000/firmware/EOS-4.21.8M.swi',
+            'url': f"{current_app.config['FIRMWARE_SERVER']}/eos/vEOS-lab-4.24.2.1F.swi",
             'version': '4.21.8M'
         },
         'always_execute': True
