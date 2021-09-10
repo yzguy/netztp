@@ -7,9 +7,11 @@ vars:
 
 tasks:
   build:
+    desc: Build {{ .DOCKER_IMAGE }}
     cmds:
       - docker build -t {{ .DOCKER_IMAGE }}:{{ .GIT_COMMIT }} .
 
   push:
+    desc: Push {{ .DOCKER_IMAGE }}
     cmds:
       - docker push {{ .DOCKER_IMAGE }}:{{ .GIT_COMMIT }}
