@@ -1,7 +1,7 @@
 ! Command: show running-config
-! device: {{ device.hostname }}
+! device: {{ device.name }}
 !
-hostname {{ device.hostname }}
+hostname {{ device.name }}
 ip domain-name {{ device.domain_name }}
 !
 username admin privilege 15 role network-admin secret admin

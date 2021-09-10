@@ -1,7 +1,7 @@
 from flask import make_response, jsonify, request, url_for, redirect, abort, \
     render_template, current_app
 from netztp.util import response_with_content_type, generate_checksum
-from netztp import inventory
+from netztp import inventory as inv
 from netztp.eos import bp
 
 from datetime import datetime
@@ -75,23 +75,30 @@ def ztp_nodes():
 # copy_file - download and save file
 @bp.route('/ztp/nodes/<serialnum>')
 def ztp_nodes_serial(serialnum):
-    # Look for Device
-
     actions = []
 
-    # If not device, return unknown/no actions
-    # return jsonify({
-    #     'name': 'Unknown Device',
-    #     'actions': []
-    # }), 404
+    device = inv.device(serialnum)
+    # Look for Device
+    if not device:
+        return jsonify({
+            'name': 'Unknown Device',
+            'actions': []
+        }), 404
+
+    # Get firmware version from inventory or use default
+    eos_versions = current_app.config['EOS_VERSIONS']
+    version = device.custom_fields['firmware']
+    if not version:
+        version = eos_versions['default']
+    filename = eos_versions[version]
 
     # Upgrade Software Action
     actions.append({
         'name': 'Upgrade Operating System',
         'action': 'install_image',
         'attributes': {
-            'url': f"{current_app.config['FIRMWARE_SERVER']}/eos/vEOS-lab-4.24.2.1F.swi",
-            'version': '4.21.8M'
+            'url': f"{current_app.config['FIRMWARE_SERVER']}/eos/{filename}",
+            'version': version
         },
         'always_execute': True
     })
@@ -121,7 +128,7 @@ def ztp_nodes_serial(serialnum):
         'name': 'Install static startup-config file',
         'action': 'replace_config',
         'attributes': {
-            'url': '/nodes/{}/startup-config'.format(serialnum)
+            'url': f'/nodes/{serialnum}/startup-config'
         },
         'always_execute': True
     })
@@ -131,7 +138,7 @@ def ztp_nodes_serial(serialnum):
         'name': 'Signal ZTP Completion',
         'action': 'copy_file',
         'attributes': {
-            'src_url': '/{}/ztp_finished'.format(serialnum),
+            'src_url': f'/{serialnum}/ztp_finished',
             'dst_url': '/mnt/flash',
             'mode': '0644',
             'overwrite': 'replace'
@@ -166,14 +173,14 @@ def ztp_cli_commands():
 # Node retreives device-specific startup-config
 @bp.route('/ztp/nodes/<serialnum>/startup-config')
 def ztp_startup_config(serialnum):
-    device = inventory.device(serialnum)
+    device = inv.device(serialnum)
     return response_with_content_type(render_template('eos.j2', device=device),
                                       'text/plain')
 
 # Node retrieves checksum for startup-config
 @bp.route('/ztp/meta/nodes/<serialnum>/startup-config')
 def meta_serial_startup_config(serialnum):
-    device = inventory.device(serialnum)
+    device = inv.device(serialnum)
     return jsonify(generate_checksum(render_template('eos.j2', device=device)))
 
 # Node retrieves the time it finished ZTP
