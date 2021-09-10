@@ -10,8 +10,6 @@ def create_app():
     netztp_env = os.getenv('NETZTP_ENV', 'DEFAULT').capitalize()
     app.config.from_object(f'netztp.config.{netztp_env}')
 
-    inventory.authenticate(app.config['INVENTORY_API_TOKEN'])
-
     from netztp.eos import bp as eos
     app.register_blueprint(eos, url_prefix='/eos')
 
