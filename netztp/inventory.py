@@ -25,10 +25,7 @@ class Inventory(object):
         }
     }
 
-    def __init__(self):
-        self.api_token = None
-
-    def authenticate(self, api_token):
+    def __init__(self, api_token):
         self.api_token = api_token
 
     def device(self, id):

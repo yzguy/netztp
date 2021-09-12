@@ -17,7 +17,9 @@ class Default(object):
         'level': 'DEBUG'
     }]
 
-    FIRMWARE_SERVER = 'https://firmware.yzguy.io'
+    FIRMWARE_SERVER = 'http://firmware.yzguy.io'
+
+    DATASTORE_SERVER = 'http://192.168.221.100:8000'
 
 class Development(Default):
     FLASK_ENV = 'development'
