@@ -1,11 +1,9 @@
 from flask import Blueprint, current_app
 
-from netztp.pxe.datastore import Datastore
+import git
 
 bp = Blueprint('pxe', __name__, static_folder='static',
                                 template_folder='templates')
-
-datastore = Datastore(current_app.config['DATASTORE_SERVER'])
 
 from netztp.pxe import routes
 

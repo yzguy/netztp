@@ -1,27 +1,36 @@
-from flask import request, render_template, current_app, url_for
-
-from netztp.pxe import bp, datastore
-from netztp.pxe.datastore import DatastoreExceptionNotFound
+from flask import request, render_template, current_app, url_for, \
+        abort
+from netztp.pxe import bp
 from netztp.util import response_with_content_type
+
+import os, yaml, git
+
+@bp.errorhandler(404)
+def page_not_found(e):
+    return response_with_content_type(
+            render_template('shell.j2'), 'text/plain')
 
 @bp.route('/boot')
 def boot():
     mac_address = request.args.get('mac')
 
     try:
-        boot = datastore.boot(mac_address)
-    except DatastoreExceptionNotFound:
-        return response_with_content_type(
-                render_template('shell.j2'), 'text/plain')
+        boot_path = os.path.join(bp.static_folder, 'boot.json')
+        with open(boot_path, 'r') as fd:
+            boot_data = yaml.full_load(fd)
+    except FileNotFoundError:
+        abort(404)
+
+    if mac_address not in boot_data:
+        abort(404)
 
     try:
         path = {
             'flatcar': url_for('pxe.ignition', mac=mac_address),
             'ubuntu': url_for('pxe.cloud_init', mac=mac_address)
-        }[boot]
+        }[boot_data[mac_address]]
     except KeyError:
-        return response_with_content_type(
-                render_template('shell.j2'), 'text/plain')
+        abort(404)
 
     firmware_server = current_app.config['FIRMWARE_SERVER']
     config_url = '{}{}'.format(request.host_url, path.lstrip('/'))
@@ -36,13 +45,8 @@ def boot():
 
 @bp.route('/ignition/<mac>')
 def ignition(mac):
-    try:
-        ignition = datastore.ignition(mac)
-    except DatastoreExceptionNotFound:
-        return response_with_content_type(
-                render_template('shell.j2'), 'text/plain')
-
-    return response_with_content_type(ignition, 'text/plain')
+    file = bp.send_static_file(f'ignition/{mac}')
+    return response_with_content_type(file, 'text/plain')
 
 @bp.route('/cloud-init/<mac>')
 def cloud_init(mac):
@@ -50,20 +54,16 @@ def cloud_init(mac):
 
 @bp.route('/cloud-init/<mac>/meta-data')
 def cloud_init_meta_data(mac):
-    try:
-        meta_data = datastore.meta_data(mac)
-    except DatastoreExceptionNotFound:
-        return response_with_content_type(
-                render_template('shell.j2'), 'text/plain')
-
-    return response_with_content_type(meta_data, 'text/plain')
+    file = bp.send_static_file(f'cloud-init/{mac}/meta-data')
+    return response_with_content_type(file, 'text/plain')
 
 @bp.route('/cloud-init/<mac>/user-data')
 def cloud_init_user_data(mac):
-    try:
-        user_data = datastore.user_data(mac)
-    except DatastoreExceptionNotFound:
-        return response_with_content_type(
-                render_template('shell.j2'), 'text/plain')
+    file = bp.send_static_file(f'cloud-init/{mac}/user-data')
+    return response_with_content_type(file, 'text/plain')
 
-    return response_with_content_type(user_data, 'text/plain')
+@bp.route('/refresh')
+def refresh():
+    repo = git.Repo(bp.static_folder)
+    repo.remotes.origin.pull('master')
+    return repo.head.object.hexsha

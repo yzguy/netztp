@@ -19,7 +19,10 @@ class Default(object):
 
     FIRMWARE_SERVER = 'http://firmware.yzguy.io'
 
-    DATASTORE_SERVER = 'http://192.168.221.100:8000'
+    GITHUB_TOKEN = os.environ.get('GITHUB_TOKEN')
+
+    PXE_CONFIG_REPO = 'github.com/yzguy/netztp-configs.git'
+
 
 class Development(Default):
     FLASK_ENV = 'development'

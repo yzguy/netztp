@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-import os
+import os, git
 
 
 def create_app():
@@ -17,6 +17,15 @@ def create_app():
 
         from netztp.pxe import bp as pxe
         app.register_blueprint(pxe, url_prefix='/pxe')
+
+        git_url = 'https://{}@{}'.format(
+                    app.config['GITHUB_TOKEN'],
+                    app.config['PXE_CONFIG_REPO']
+                )
+        try:
+            git.Repo.clone_from(git_url, pxe.static_folder)
+        except git.exc.GitCommandError:
+            git.Repo(pxe.static_folder).remotes.origin.pull('master')
 
         @app.route('/')
         def index():
