@@ -66,6 +66,15 @@ def cloud_init_user_data(mac):
 
 @bp.route('/refresh')
 def refresh():
+    branch = request.args.get('branch', default='master')
+
     repo = git.Repo(bp.static_folder)
-    repo.remotes.origin.pull('master')
-    return repo.head.object.hexsha
+
+    # Fetch from remote
+    repo.remotes.origin.fetch()
+
+    # checkout branch and get latest
+    repo.git.checkout(branch)
+    repo.remotes.origin.pull(branch)
+
+    return render_template('git.j2', repo=repo)
