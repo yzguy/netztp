@@ -6,4 +6,4 @@ htmlcov/
 nosetests.xml
 __pycache__
 app/eos/static/files
-
+netztp/pxe/static/
