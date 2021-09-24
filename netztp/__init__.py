@@ -1,6 +1,6 @@
 from flask import Flask, render_template
-import os, git
 
+import os, git, shutil
 
 def create_app():
     app = Flask(__name__)
@@ -22,10 +22,12 @@ def create_app():
                     app.config['GITHUB_TOKEN'],
                     app.config['PXE_CONFIG_REPO']
                 )
-        try:
+
+        if os.path.isdir(pxe.static_folder):
+            repo = git.Repo(pxe.static_folder)
+            repo.remotes.origin.pull('master')
+        else:
             git.Repo.clone_from(git_url, pxe.static_folder)
-        except git.exc.GitCommandError:
-            git.Repo(pxe.static_folder).remotes.origin.pull('master')
 
         @app.route('/')
         def index():

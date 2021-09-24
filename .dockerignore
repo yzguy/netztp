@@ -1,10 +1,11 @@
 .git/
 .gitignore
 __pycache__
+Taskfile.yml
 README.md
 requirements-dev.txt
+images/
 script/
 tests/
 venv/
-app/eos/static/files
-netztp/pxe/static
+netztp/pxe/static/
