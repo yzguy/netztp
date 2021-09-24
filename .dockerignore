@@ -1,7 +1,10 @@
 .git/
 .gitignore
+__pycache__
 README.md
 requirements-dev.txt
 script/
 tests/
 venv/
+app/eos/static/files
+netztp/pxe/static
