@@ -1,7 +1,11 @@
-from flask import Blueprint
+from flask import Blueprint, current_app
+
+from netztp.inventory import Inventory
 
 bp = Blueprint('eos', __name__, static_folder='static',
                                 template_folder='templates')
+
+inventory = Inventory(current_app.config['INVENTORY_API_TOKEN'])
 
 from netztp.eos import routes
 

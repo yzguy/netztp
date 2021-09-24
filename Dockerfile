@@ -1,15 +1,14 @@
-FROM ubuntu:20.04
+FROM python:3.9.7
 
-RUN apt-get update && apt-get install -y python3 python3-pip python3-venv python3-dev
+WORKDIR /usr/src/app
 
-COPY . /opt/netztp
+RUN python3 -m venv venv
+ENV PATH venv/bin:$PATH
 
-ENV VIRTUALENV /opt/netztp/venv
-RUN python3 -m venv $VIRTUALENV
-ENV PATH $VIRTUALENV/bin:$PATH
+COPY . .
 
-RUN pip install -r /opt/netztp/requirements.txt
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 8001/tcp
+CMD ["gunicorn", "--config", "gunicorn.py", "wsgi:app"]
 
-ENTRYPOINT ["gunicorn", "--pythonpath", "/opt/netztp", "--config", "/opt/netztp/gunicorn.py", "wsgi:app"]

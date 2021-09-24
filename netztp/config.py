@@ -17,7 +17,12 @@ class Default(object):
         'level': 'DEBUG'
     }]
 
-    FIRMWARE_SERVER = 'https://firmware.yzguy.io'
+    FIRMWARE_SERVER = 'http://firmware.yzguy.io'
+
+    GITHUB_TOKEN = os.environ.get('GITHUB_TOKEN')
+
+    PXE_CONFIG_REPO = 'github.com/yzguy/netztp-configs.git'
+
 
 class Development(Default):
     FLASK_ENV = 'development'

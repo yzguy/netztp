@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html>
+<body>
+<ul>
+    <li>Branch: {{ repo.active_branch.name }}
+    <li>Commit: {{ repo.head.commit.hexsha[0:7] }}
+    <li>Message: {{ repo.head.commit.message }}
+</body>
+</html>

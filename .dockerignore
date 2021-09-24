@@ -1,7 +1,11 @@
 .git/
 .gitignore
+__pycache__
+Taskfile.yml
 README.md
 requirements-dev.txt
+images/
 script/
 tests/
 venv/
+netztp/pxe/static/
