@@ -24,11 +24,13 @@ def boot():
     if mac_address not in boot_data:
         abort(404)
 
+    boot = boot_data[mac_address]
+
     try:
         path = {
             'flatcar': url_for('pxe.ignition', mac=mac_address),
             'ubuntu': url_for('pxe.cloud_init', mac=mac_address)
-        }[boot_data[mac_address]]
+        }[boot]
     except KeyError:
         abort(404)
 
