@@ -1,9 +1,9 @@
 from flask import request, render_template, current_app, url_for, \
-        abort
+        abort, json
 from netztp.pxe import bp
 from netztp.util import response_with_content_type
 
-import os, yaml, git
+import os, git
 
 @bp.errorhandler(404)
 def page_not_found(e):
@@ -17,7 +17,7 @@ def boot():
     try:
         boot_path = os.path.join(bp.static_folder, 'boot.json')
         with open(boot_path, 'r') as fd:
-            boot_data = yaml.full_load(fd)
+            boot_data = json.load(fd)
     except FileNotFoundError:
         abort(404)
 
@@ -28,7 +28,7 @@ def boot():
 
     try:
         path = {
-            'flatcar': url_for('pxe.ignition', mac=mac_address),
+            'flatcar': url_for('pxe.ignition_install', mac=mac_address),
             'ubuntu': url_for('pxe.cloud_init', mac=mac_address)
         }[boot]
     except KeyError:
@@ -45,10 +45,26 @@ def boot():
                 mac_address=mac_address
             ), 'text/plain')
 
-@bp.route('/ignition/<mac>')
+@bp.route('/ignition/<mac>/install')
+def ignition_install(mac):
+    try:
+        install_path = os.path.join(bp.static_folder, 'ignition', 'install')
+        with open(install_path, 'r') as fd:
+            install_data = json.load(fd)
+    except FileNotFoundError:
+        abort(404)
+
+    path = url_for('pxe.ignition', mac=mac)
+    config_url = '{}{}'.format(request.host_url, path.lstrip('/'))
+
+    install_data['storage']['files'][0]['contents']['source'] = config_url
+
+    return response_with_content_type(install_data, 'application/json')
+
+@bp.route('/ignition/<mac>/config')
 def ignition(mac):
-    file = bp.send_static_file(f'ignition/{mac}')
-    return response_with_content_type(file, 'text/plain')
+    file = bp.send_static_file(f'ignition/hosts/{mac}')
+    return response_with_content_type(file, 'application/json')
 
 @bp.route('/cloud-init/<mac>')
 def cloud_init(mac):
