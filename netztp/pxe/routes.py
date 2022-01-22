@@ -21,10 +21,13 @@ def boot():
     except FileNotFoundError:
         abort(404)
 
-    if mac_address not in boot_data:
-        abort(404)
-
-    boot = boot_data[mac_address]
+    try:
+        boot = boot_data[mac_address]
+    except KeyError:
+        try:
+            boot = boot_data['default']
+        except KeyError:
+            abort(404)
 
     try:
         path = {
