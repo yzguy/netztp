@@ -4,6 +4,7 @@ name: netztp
 
 steps:
 - name: tag
+  image: alpine/git
   commands:
     - echo -n $(git log -n 1 --format=%h) > .tags
 
