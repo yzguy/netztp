@@ -1,0 +1,13 @@
+kind: pipeline
+type: docker
+name: netztp
+
+steps:
+- name: tag
+  commands:
+    - echo -n $(git log -n 1 --format=%h) > .tags
+
+- name: docker
+  image: plugins/docker
+  settings:
+    repo: registry.yzguy.io/netztp
