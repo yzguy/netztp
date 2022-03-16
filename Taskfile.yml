@@ -1,7 +1,7 @@
 version: '3'
 
 vars:
-  DOCKER_IMAGE: registry.yzguy.io/netztp
+  DOCKER_IMAGE: registry.yzguy.net/netztp
   GIT_COMMIT:
     sh: git log -n 1 --format=%h
 
