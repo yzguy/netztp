@@ -11,17 +11,9 @@ jobs:
     steps:
       - checkout
       - run: task build
-
-  push:
-    executor: runner
-    steps:
-      - checkout
       - run: task push
 
 workflows:
-  build_and_push:
+  build_image
     jobs:
       - build
-      - push:
-          requires:
-            - build
