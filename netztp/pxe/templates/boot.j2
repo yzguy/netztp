@@ -14,5 +14,9 @@ initrd ${base-url}/ubuntu/initrd
 {% elif boot == 'proxmox72' %}
 kernel ${base-url}/proxmox/7.2/linux26 initrd=initrd vga=791 video=vesafb:ywrap,mtrr ramdisk_size=16777216 rw quiet splash=silent
 initrd ${base-url}/proxmox/7.2/initrd
+
+{% elif boot == 'proxmox73' %}
+kernel ${base-url}/proxmox/7.3/linux26 initrd=initrd vga=791 video=vesafb:ywrap,mtrr ramdisk_size=16777216 rw quiet splash=silent
+initrd ${base-url}/proxmox/7.3/initrd
 {% endif %}
 boot
