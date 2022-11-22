@@ -33,7 +33,7 @@ def boot():
         path = {
             'flatcar': url_for('pxe.ignition_install', mac=mac_address),
             'ubuntu': url_for('pxe.cloud_init', mac=mac_address),
-            'proxmox72': None
+            'proxmox72': '/'
         }[boot]
     except KeyError:
         abort(404)
