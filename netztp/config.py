@@ -10,18 +10,18 @@ class Default(object):
         'sqlite:///{}'.format(os.path.join(basedir, 'netztp.db'))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    INVENTORY_API_TOKEN = os.environ.get('INVENTORY_API_TOKEN')
+    INVENTORY_API_TOKEN = os.getenv('INVENTORY_API_TOKEN')
 
     LOG_DESTINATIONS = [{
         'destination': '192.168.50.2:514',
         'level': 'DEBUG'
     }]
 
-    FIRMWARE_SERVER = 'http://firmware.yzguy.io'
+    FIRMWARE_SERVER = os.getenv('FIRMWARE_SERVER')
 
-    GITHUB_TOKEN = os.environ.get('GITHUB_TOKEN')
+    GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 
-    PXE_CONFIG_REPO = 'github.com/yzguy/netztp-configs.git'
+    PXE_CONFIG_REPO = os.getenv('PXE_CONFIG_REPO')# 'github.com/yzguy/netztp-configs.git'
 
 
 class Development(Default):
