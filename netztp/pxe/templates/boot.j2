@@ -10,5 +10,9 @@ initrd ${base-url}/flatcar/flatcar_production_pxe_image.cpio.gz
 {% elif boot == 'ubuntu' %}
 kernel ${base-url}/ubuntu/vmlinuz initrd=initrd autoinstall ip=dhcp url=${base-url}/ubuntu/ubuntu-20.04.2-live-server-amd64.iso ds=nocloud-net;s={{ config_url }}
 initrd ${base-url}/ubuntu/initrd
+
+{% elif boot == 'proxmox72' %}
+kernel ${base-url}/proxmox/7.2/linux26 initrd=initrd vga=791 video=vesafb:ywrap,mtrr ramdisk_size=16777216 rw quiet splash=silent
+initrd ${base-url}/proxmox/7.2/initrd
 {% endif %}
 boot
