@@ -8,7 +8,7 @@ kernel ${base-url}/flatcar/flatcar_production_pxe.vmlinuz initrd=flatcar_product
 initrd ${base-url}/flatcar/flatcar_production_pxe_image.cpio.gz
 
 {% elif boot == 'ubuntu' %}
-kernel ${base-url}/ubuntu/vmlinuz initrd=initrd autoinstall ip=dhcp url=${base-url}/ubuntu/ubuntu-20.04.2-live-server-amd64.iso ds=nocloud-net;s={{ config_url }}
+kernel ${base-url}/ubuntu/vmlinuz initrd=initrd autoinstall ip=dhcp url=${base-url}/ubuntu/ubuntu.iso ds=nocloud-net;s={{ config_url }}
 initrd ${base-url}/ubuntu/initrd
 
 {% elif boot == 'proxmox72' %}
