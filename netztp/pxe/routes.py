@@ -32,7 +32,8 @@ def boot():
     try:
         path = {
             'flatcar': url_for('pxe.ignition_install', mac=mac_address),
-            'ubuntu': url_for('pxe.cloud_init', mac=mac_address),
+            'ubuntu2004': url_for('pxe.cloud_init', mac=mac_address),
+            'ubuntu2204': url_for('pxe.cloud_init', mac=mac_address),
             'proxmox72': '/',
             'proxmox73': '/'
         }[boot]
