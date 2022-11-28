@@ -7,8 +7,12 @@ set base-url {{ firmware_server }}
 kernel ${base-url}/flatcar/flatcar_production_pxe.vmlinuz initrd=flatcar_production_pxe_image.cpio.gz flatcar.first_boot=1 ignition.config.url={{ config_url }}
 initrd ${base-url}/flatcar/flatcar_production_pxe_image.cpio.gz
 
-{% elif boot == 'ubuntu' %}
-kernel ${base-url}/ubuntu/vmlinuz initrd=initrd autoinstall ip=dhcp url=${base-url}/ubuntu/ubuntu.iso ds=nocloud-net;s={{ config_url }}
+{% elif boot == 'ubuntu2004' %}
+kernel ${base-url}/ubuntu/vmlinuz initrd=initrd autoinstall ip=dhcp url=${base-url}/ubuntu/20.04.5/ubuntu-20.04.5-live-server-amd64.iso ds=nocloud-net;s={{ config_url }}
+initrd ${base-url}/ubuntu/initrd
+
+{% elif boot == 'ubuntu2204' %}
+kernel ${base-url}/ubuntu/vmlinuz initrd=initrd autoinstall ip=dhcp url=${base-url}/ubuntu/22.04.1/ubuntu-22.04.1-live-server-amd64.iso ds=nocloud-net;s={{ config_url }}
 initrd ${base-url}/ubuntu/initrd
 
 {% elif boot == 'proxmox72' %}
