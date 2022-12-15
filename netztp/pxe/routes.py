@@ -34,6 +34,7 @@ def boot():
             'flatcar': url_for('pxe.ignition_install', mac=mac_address),
             'ubuntu2004': url_for('pxe.cloud_init', mac=mac_address),
             'ubuntu2204': url_for('pxe.cloud_init', mac=mac_address),
+            'debian11': '/',
             'proxmox72': '/',
             'proxmox73': '/'
         }[boot]
