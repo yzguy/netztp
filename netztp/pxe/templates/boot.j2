@@ -15,7 +15,7 @@ kernel ${base-url}/ubuntu/vmlinuz initrd=initrd autoinstall ip=dhcp url=${base-u
 initrd ${base-url}/ubuntu/initrd
 
 {% elif boot == 'debian11' %}
-kernel ${base-url}/debian/11/vmlinuz initrd=initrd preseed/url={{ config_url }} http://host/path/to/preseed.cfg
+kernel ${base-url}/debian/11/vmlinuz initrd=initrd preseed/url={{ config_url }}
 initrd ${base-url}/debian/11/initrd
 
 {% elif boot == 'proxmox72' %}
