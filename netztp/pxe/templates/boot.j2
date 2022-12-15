@@ -3,7 +3,6 @@
 set base-url {{ firmware_server }}
 
 {% if boot == 'flatcar' %}
-# Flatcar
 kernel ${base-url}/flatcar/flatcar_production_pxe.vmlinuz initrd=flatcar_production_pxe_image.cpio.gz flatcar.first_boot=1 ignition.config.url={{ config_url }}
 initrd ${base-url}/flatcar/flatcar_production_pxe_image.cpio.gz
 
@@ -14,6 +13,10 @@ initrd ${base-url}/ubuntu/initrd
 {% elif boot == 'ubuntu2204' %}
 kernel ${base-url}/ubuntu/vmlinuz initrd=initrd autoinstall ip=dhcp url=${base-url}/ubuntu/22.04.1/ubuntu-22.04.1-live-server-amd64.iso ds=nocloud-net;s={{ config_url }}/
 initrd ${base-url}/ubuntu/initrd
+
+{% elif boot == 'debian11' %}
+kernel ${base-url}/debian/11/vmlinuz initrd=initrd
+initrd ${base-url}/debian/11/initrd
 
 {% elif boot == 'proxmox72' %}
 kernel ${base-url}/proxmox/7.2/linux26 initrd=initrd vga=791 video=vesafb:ywrap,mtrr ramdisk_size=16777216 rw quiet splash=silent
