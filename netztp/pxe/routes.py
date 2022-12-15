@@ -46,7 +46,7 @@ def boot():
 
     return response_with_content_type(
             render_template('boot.j2',
-                boot=boot,
+                boot=boot['image'],
                 firmware_server=firmware_server,
                 config_url=config_url,
                 mac_address=mac_address

@@ -15,11 +15,11 @@ if [ ! -d "$VENV_NAME" ]; then
     if [ -z "$VENV_PYTHON" ]; then
         VENV_PYTHON=$(command -v python)
     fi
-    virtualenv --python="$VENV_PYTHON" "$VENV_NAME"
+    python3 -m venv "$VENV_NAME"
 fi
 . "$VENV_NAME/bin/activate"
 
-pip install -U 'pip>=19.3.1'
+pip install -U 'pip>=22.3.1'
 pip install -r requirements.txt
 
 if [ "$ENV" != "production" ]; then
