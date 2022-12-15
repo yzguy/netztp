@@ -34,7 +34,7 @@ def boot():
             'flatcar': url_for('pxe.ignition_install', mac=mac_address),
             'ubuntu2004': url_for('pxe.cloud_init', mac=mac_address),
             'ubuntu2204': url_for('pxe.cloud_init', mac=mac_address),
-            'debian11': '/',
+            'debian11': url_for('pxe.preseed', mac=mac_address),
             'proxmox72': '/',
             'proxmox73': '/'
         }[boot]
@@ -85,6 +85,11 @@ def cloud_init_meta_data(mac):
 @bp.route('/cloud-init/<mac>/user-data')
 def cloud_init_user_data(mac):
     file = bp.send_static_file(f'cloud-init/{mac}/user-data')
+    return response_with_content_type(file, 'text/plain')
+
+@bp.route('/preseed/<mac>')
+def preseed(mac):
+    file = bp.send_static_file(f'preseed/{mac}')
     return response_with_content_type(file, 'text/plain')
 
 @bp.route('/refresh')
