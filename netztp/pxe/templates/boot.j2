@@ -21,5 +21,9 @@ initrd ${base-url}/proxmox/7.2/initrd
 {% elif boot == 'proxmox73' %}
 kernel ${base-url}/proxmox/7.3/linux26 initrd=initrd vga=791 video=vesafb:ywrap,mtrr ramdisk_size=16777216 rw quiet splash=silent
 initrd ${base-url}/proxmox/7.3/initrd
+
+{% elif boot == 'vyos' %}
+kernel ${base-url}/vyos/1.3.2/vmlinuz
+initrd ${base-url}/vyos/1.3.2/initrd.img boot=live nopersistence noautologin nonetworking fetch=${base-url}/vyos/1.3.2/filesystem.squashfs
 {% endif %}
 boot

@@ -36,7 +36,8 @@ def boot():
             'ubuntu2204': url_for('pxe.cloud_init', mac=mac_address),
             'debian11': url_for('pxe.preseed', mac=mac_address),
             'proxmox72': '/',
-            'proxmox73': '/'
+            'proxmox73': '/',
+            'vyos132': '/'
         }[boot['image']]
     except KeyError:
         abort(404)
