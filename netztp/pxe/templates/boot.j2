@@ -22,6 +22,10 @@ initrd ${base-url}/proxmox/7.2/initrd
 kernel ${base-url}/proxmox/7.3/linux26 initrd=initrd vga=791 video=vesafb:ywrap,mtrr ramdisk_size=16777216 rw quiet splash=silent
 initrd ${base-url}/proxmox/7.3/initrd
 
+{% elif boot == 'proxmox74' %}
+kernel ${base-url}/proxmox/7.4/linux26 initrd=initrd vga=791 video=vesafb:ywrap,mtrr ramdisk_size=16777216 rw quiet splash=silent
+initrd ${base-url}/proxmox/7.4/initrd
+
 {% elif boot == 'vyos132' %}
 kernel ${base-url}/vyos/1.3.2/vmlinuz initrd=initrd.img boot=live nopersistence noautologin nonetworking fetch=${base-url}/vyos/1.3.2/filesystem.squashfs
 initrd ${base-url}/vyos/1.3.2/initrd.img

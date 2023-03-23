@@ -37,6 +37,7 @@ def boot():
             'debian11': url_for('pxe.preseed', mac=mac_address),
             'proxmox72': '/',
             'proxmox73': '/',
+            'proxmox74': '/',
             'vyos132': '/'
         }[boot['image']]
     except KeyError:
