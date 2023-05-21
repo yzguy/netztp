@@ -6,7 +6,7 @@ set base-url {{ firmware_server }}
 kernel ${base-url}/flatcar/flatcar_production_pxe.vmlinuz initrd=flatcar_production_pxe_image.cpio.gz flatcar.first_boot=1 ignition.config.url={{ config_url }}
 initrd ${base-url}/flatcar/flatcar_production_pxe_image.cpio.gz
 
-{% elif boot in ['ubuntu2004', 'ubuntu2204'] %}
+{% elif boot in ['ubuntu2004', 'ubuntu2204', 'ubuntu2304'] %}
 kernel ${base-url}/ubuntu/{{ boot }}/vmlinuz initrd=initrd autoinstall ip=dhcp url=${base-url}/ubuntu/{{ boot }}/ubuntu.iso ds=nocloud-net;s={{ config_url }}/
 initrd ${base-url}/ubuntu/{{ boot }}/initrd
 
