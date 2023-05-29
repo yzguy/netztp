@@ -10,21 +10,13 @@ initrd ${base-url}/flatcar/flatcar_production_pxe_image.cpio.gz
 kernel ${base-url}/ubuntu/{{ boot }}/vmlinuz initrd=initrd autoinstall ip=dhcp cloud-config-url=/dev/null url=${base-url}/ubuntu/{{ boot }}/ubuntu.iso ds=nocloud-net;s={{ config_url }}/
 initrd ${base-url}/ubuntu/{{ boot }}/initrd
 
-{% elif boot == 'debian11' %}
-kernel ${base-url}/debian/11/linux initrd=initrd auto=true priority=critical interface=auto url={{ config_url }}
-initrd ${base-url}/debian/11/initrd.gz
+{% elif boot in ['debian11'] %}
+kernel ${base-url}/debian/{{ boot }}/linux initrd=initrd auto=true priority=critical interface=auto url={{ config_url }}
+initrd ${base-url}/debian/{{ boot }}/initrd.gz
 
-{% elif boot == 'proxmox72' %}
-kernel ${base-url}/proxmox/7.2/linux26 initrd=initrd vga=791 video=vesafb:ywrap,mtrr ramdisk_size=16777216 rw quiet splash=silent
-initrd ${base-url}/proxmox/7.2/initrd
-
-{% elif boot == 'proxmox73' %}
-kernel ${base-url}/proxmox/7.3/linux26 initrd=initrd vga=791 video=vesafb:ywrap,mtrr ramdisk_size=16777216 rw quiet splash=silent
-initrd ${base-url}/proxmox/7.3/initrd
-
-{% elif boot == 'proxmox74' %}
-kernel ${base-url}/proxmox/7.4/linux26 initrd=initrd vga=791 video=vesafb:ywrap,mtrr ramdisk_size=16777216 rw quiet splash=silent
-initrd ${base-url}/proxmox/7.4/initrd
+{% elif boot in ['proxmox72', 'proxmox73', 'proxmox74'] %}
+kernel ${base-url}/proxmox/{{ boot }}/linux26 initrd=initrd vga=791 video=vesafb:ywrap,mtrr ramdisk_size=16777216 rw quiet splash=silent
+initrd ${base-url}/proxmox/{{ boot }}/initrd
 
 {% elif boot == 'vyos132' %}
 kernel ${base-url}/vyos/1.3.2/vmlinuz initrd=initrd.img boot=live nopersistence noautologin nonetworking fetch=${base-url}/vyos/1.3.2/filesystem.squashfs
