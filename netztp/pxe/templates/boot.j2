@@ -7,7 +7,7 @@ kernel ${base-url}/flatcar/flatcar_production_pxe.vmlinuz initrd=flatcar_product
 initrd ${base-url}/flatcar/flatcar_production_pxe_image.cpio.gz
 
 {% elif boot in ['ubuntu2004', 'ubuntu2204', 'ubuntu2304'] %}
-kernel ${base-url}/ubuntu/{{ boot }}/vmlinuz initrd=initrd autoinstall ip=dhcp url=${base-url}/ubuntu/{{ boot }}/ubuntu.iso ds=nocloud-net;s={{ config_url }}/
+kernel ${base-url}/ubuntu/{{ boot }}/vmlinuz initrd=initrd autoinstall ip=dhcp cloud-config-url=/dev/null url=${base-url}/ubuntu/{{ boot }}/ubuntu.iso ds=nocloud-net;s={{ config_url }}/
 initrd ${base-url}/ubuntu/{{ boot }}/initrd
 
 {% elif boot == 'debian11' %}
