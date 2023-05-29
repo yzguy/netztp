@@ -11,8 +11,8 @@ kernel ${base-url}/ubuntu/{{ boot }}/vmlinuz initrd=initrd autoinstall ip=dhcp c
 initrd ${base-url}/ubuntu/{{ boot }}/initrd
 
 {% elif boot == 'debian11' %}
-kernel ${base-url}/debian/11/vmlinuz initrd=initrd auto=true priority=critical interface=auto url={{ config_url }}
-initrd ${base-url}/debian/11/initrd
+kernel ${base-url}/debian/11/linux initrd=initrd auto=true priority=critical interface=auto url={{ config_url }}
+initrd ${base-url}/debian/11/initrd.gz
 
 {% elif boot == 'proxmox72' %}
 kernel ${base-url}/proxmox/7.2/linux26 initrd=initrd vga=791 video=vesafb:ywrap,mtrr ramdisk_size=16777216 rw quiet splash=silent
