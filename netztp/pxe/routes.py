@@ -40,6 +40,7 @@ def boot():
             'proxmox72': '/',
             'proxmox73': '/',
             'proxmox74': '/',
+            'proxmox80': '/',
             'vyos132': '/'
         }[boot['image']]
     except KeyError:
