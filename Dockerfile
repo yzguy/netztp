@@ -10,5 +10,5 @@ COPY . .
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-CMD ["gunicorn", "--config", "gunicorn.py", "wsgi:app"]
+CMD ["venv/bin/gunicorn", "--config", "gunicorn.py", "wsgi:app"]
 
