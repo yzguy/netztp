@@ -41,7 +41,12 @@ def boot():
             'proxmox73': '/',
             'proxmox74': '/',
             'proxmox80': '/',
-            'vyos132': '/'
+            'proxmox81': '/',
+            'vyos130': '/',
+            'vyos131': '/',
+            'vyos132': '/',
+            'vyos133': '/',
+            'vyos134': '/'
         }[boot['image']]
     except KeyError:
         abort(404)

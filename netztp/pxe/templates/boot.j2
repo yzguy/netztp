@@ -6,20 +6,20 @@ set base-url {{ firmware_server }}
 kernel ${base-url}/flatcar/flatcar_production_pxe.vmlinuz initrd=flatcar_production_pxe_image.cpio.gz flatcar.first_boot=1 ignition.config.url={{ config_url }}
 initrd ${base-url}/flatcar/flatcar_production_pxe_image.cpio.gz
 
-{% elif boot in ['ubuntu2004', 'ubuntu2204', 'ubuntu2304'] %}
+{% elif boot.startswith('ubuntu') %}
 kernel ${base-url}/ubuntu/{{ boot }}/linux initrd=initrd autoinstall root=/dev/ram0 ramdisk_size=1500000 ip=dhcp cloud-config-url=/dev/null url=${base-url}/ubuntu/{{ boot }}/ubuntu.iso ds=nocloud-net;s={{ config_url }}/
 initrd ${base-url}/ubuntu/{{ boot }}/initrd
 
-{% elif boot in ['debian11', 'debian12'] %}
+{% elif boot.startswith('debian') %}
 kernel ${base-url}/debian/{{ boot }}/linux initrd=initrd.gz auto=true priority=critical interface=auto url={{ config_url }}
 initrd ${base-url}/debian/{{ boot }}/initrd.gz
 
-{% elif boot in ['proxmox72', 'proxmox73', 'proxmox74', 'proxmox80'] %}
+{% elif boot.startswith('proxmox') %}
 kernel ${base-url}/proxmox/{{ boot }}/linux26 initrd=initrd vga=791 video=vesafb:ywrap,mtrr ramdisk_size=16777216 rw quiet splash=silent
 initrd ${base-url}/proxmox/{{ boot }}/initrd
 
-{% elif boot == 'vyos132' %}
-kernel ${base-url}/vyos/1.3.2/vmlinuz initrd=initrd.img boot=live nopersistence noautologin nonetworking fetch=${base-url}/vyos/1.3.2/filesystem.squashfs
-initrd ${base-url}/vyos/1.3.2/initrd.img
+{% elif boot.startswith('vyos') %}
+kernel ${base-url}/vyos/{{ boot }}/vmlinuz initrd=initrd.img boot=live nopersistence noautologin nonetworking fetch=${base-url}/vyos/{{ boot }}/filesystem.squashfs
+initrd ${base-url}/vyos/{{ boot }}/initrd.img
 {% endif %}
 boot
