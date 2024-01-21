@@ -37,15 +37,7 @@ def boot():
             'ubuntu2304': url_for('pxe.cloud_init', mac=mac_address),
             'debian11': url_for('pxe.preseed', mac=mac_address),
             'debian12': url_for('pxe.preseed', mac=mac_address),
-            'proxmox72': '/',
-            'proxmox73': '/',
-            'proxmox74': '/',
-            'proxmox80': '/',
             'proxmox81': '/',
-            'vyos130': '/',
-            'vyos131': '/',
-            'vyos132': '/',
-            'vyos133': '/',
             'vyos134': '/',
             'netbootxyz': '/'
         }[boot['image']]
