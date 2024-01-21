@@ -21,7 +21,6 @@ initrd ${base-url}/proxmox/{{ boot }}/initrd
 {% elif boot.startswith('vyos') %}
 kernel ${base-url}/vyos/{{ boot }}/vmlinuz initrd=initrd.img boot=live nopersistence noautologin nonetworking fetch=${base-url}/vyos/{{ boot }}/filesystem.squashfs
 initrd ${base-url}/vyos/{{ boot }}/initrd.img
-{% endif %}
 
 {% elif boot.startswith('netbootxyz') %}
 chain --autofree https://boot.netboot.xyz
