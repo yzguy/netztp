@@ -46,7 +46,8 @@ def boot():
             'vyos131': '/',
             'vyos132': '/',
             'vyos133': '/',
-            'vyos134': '/'
+            'vyos134': '/',
+            'netbootxyz': '/'
         }[boot['image']]
     except KeyError:
         abort(404)
