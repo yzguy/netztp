@@ -23,6 +23,6 @@ kernel ${base-url}/vyos/{{ boot }}/vmlinuz initrd=initrd.img boot=live nopersist
 initrd ${base-url}/vyos/{{ boot }}/initrd.img
 
 {% elif boot.startswith('netbootxyz') %}
-chain --autofree https://boot.netboot.xyz
+chain --autofree http://boot.netboot.xyz
 {% endif %}
 boot
