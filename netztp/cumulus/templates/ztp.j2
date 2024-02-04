@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# CUMULUS-AUTOPROVISIONING
+set -e
+
+ztp_echo() {
+    echo "ZTP: ${1}"
+}
+
+echo "Running ZTP..."
+
+ztp_echo "Creating Management VRF"
+nv set vrf mgmt
+
+ztp_echo "Setting timezone"
+nv set system timezone America/New_York
+
+ztp_echo "Setting mgmt interface to DHCP"
+nv set interface eth0 ip address dhcp
+
+ztp_echo "Creating user(s)"
+nv set system aaa user bitplumber role system-admin
+nv set system aaa user bitplumber password bitplumber
+
+ztp_echo "Applying configuration"
+nv config apply -y
+
+sleep 5
+exit 0

@@ -9,6 +9,9 @@ def create_app():
 
     with app.app_context():
 
+        from netztp.cumulus import bp as cumulus
+        app.register_blueprint(cumulus, url_prefix='/cumulus')
+
         from netztp.eos import bp as eos
         app.register_blueprint(eos, url_prefix='/eos')
 
