@@ -38,7 +38,8 @@ def boot():
             'debian11': url_for('pxe.preseed', mac=mac_address),
             'debian12': url_for('pxe.preseed', mac=mac_address),
             'proxmox81': '/',
-            'vyos134': '/',
+            'vyos135': '/',
+            'vyos136': '/',
             'netbootxyz': '/'
         }[boot['image']]
     except KeyError:
