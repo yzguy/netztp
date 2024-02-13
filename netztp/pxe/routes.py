@@ -40,6 +40,7 @@ def boot():
             'proxmox81': '/',
             'vyos135': '/',
             'vyos136': '/',
+            'vyos15-rolling-202402120819': '/',
             'netbootxyz': '/'
         }[boot['image']]
     except KeyError:
