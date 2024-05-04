@@ -37,6 +37,7 @@ def boot():
             'ubuntu2304': url_for('pxe.cloud_init', mac=mac_address),
             'debian11': url_for('pxe.preseed', mac=mac_address),
             'debian12': url_for('pxe.preseed', mac=mac_address),
+            'talos': '/',
             'proxmox81': '/',
             'vyos135': '/',
             'vyos136': '/',
