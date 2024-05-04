@@ -37,7 +37,7 @@ def boot():
             'ubuntu2304': url_for('pxe.cloud_init', mac=mac_address),
             'debian11': url_for('pxe.preseed', mac=mac_address),
             'debian12': url_for('pxe.preseed', mac=mac_address),
-            'talos171': '/',
+            'talos171': url_for('pxe.talos', mac=mac_address),
             'proxmox81': '/',
             'vyos135': '/',
             'vyos136': '/',
@@ -58,6 +58,7 @@ def boot():
                 mac_address=mac_address
             ), 'text/plain')
 
+# IGNITION (flatcar)
 @bp.route('/ignition/<mac>/install')
 def ignition_install(mac):
     try:
@@ -79,6 +80,7 @@ def ignition(mac):
     file = bp.send_static_file(f'ignition/hosts/{mac}')
     return response_with_content_type(file, 'application/json')
 
+# CLOUD-INIT (ubuntu)
 @bp.route('/cloud-init/<mac>')
 def cloud_init(mac):
     return mac
@@ -93,9 +95,16 @@ def cloud_init_user_data(mac):
     file = bp.send_static_file(f'cloud-init/{mac}/user-data')
     return response_with_content_type(file, 'text/plain')
 
+# PRESEED (debian)
 @bp.route('/preseed/<mac>')
 def preseed(mac):
     file = bp.send_static_file(f'preseed/{mac}')
+    return response_with_content_type(file, 'text/plain')
+
+# TALOS (talos)
+@bp.route('/talos/<mac>')
+def talos(mac):
+    file = bp.send_static_file(f'talos/{mac}')
     return response_with_content_type(file, 'text/plain')
 
 @bp.route('/refresh')

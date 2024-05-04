@@ -15,7 +15,7 @@ kernel ${base-url}/debian/{{ boot }}/linux initrd=initrd.gz auto=true priority=c
 initrd ${base-url}/debian/{{ boot }}/initrd.gz
 
 {% elif boot.startswith('talos') %}
-kernel ${base-url}/talos/{{ boot }}/vmlinuz initrd=initramfs.xz net.ifnames=0 biosdevname=0 talos.platform=metal slab_nomerge pti=on ip=dhcp
+kernel ${base-url}/talos/{{ boot }}/vmlinuz initrd=initramfs.xz net.ifnames=0 biosdevname=0 talos.platform=metal slab_nomerge pti=on ip=dhcp talos.config={{ config_url }}
 initrd ${base-url}/talos/{{ boot }}/initramfs.xz
 
 {% elif boot.startswith('proxmox') %}
