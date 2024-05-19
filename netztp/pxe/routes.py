@@ -29,23 +29,18 @@ def boot():
         except KeyError:
             abort(404)
 
-    try:
-        path = {
-            'flatcar': url_for('pxe.ignition_install', mac=mac_address),
-            'ubuntu2004': url_for('pxe.cloud_init', mac=mac_address),
-            'ubuntu2204': url_for('pxe.cloud_init', mac=mac_address),
-            'ubuntu2304': url_for('pxe.cloud_init', mac=mac_address),
-            'debian11': url_for('pxe.preseed', mac=mac_address),
-            'debian12': url_for('pxe.preseed', mac=mac_address),
-            'talos171': url_for('pxe.talos', mac=mac_address),
-            'proxmox81': '/',
-            'vyos135': '/',
-            'vyos136': '/',
-            'vyos15-rolling-202402120819': '/',
-            'netbootxyz': '/'
-        }[boot['image']]
-    except KeyError:
-        abort(404)
+    # URLs for distros that support additional provisioning
+    provisionable_distros = {
+        'flatcar': url_for('pxe.ignition_install', mac=mac_address),
+        'ubuntu': url_for('pxe.cloud_init', mac=mac_address),
+        'debian': url_for('pxe.preseed', mac=mac_address),
+        'talos': url_for('pxe.talos', mac=mac_address),
+    }
+
+    path = '/'
+    for distro, cfg_path in provisionable_distros.items():
+        if boot['image'].startswith(distro):
+            path = cfg_path
 
     firmware_server = current_app.config['FIRMWARE_SERVER']
     config_url = '{}{}'.format(request.host_url, path.lstrip('/'))

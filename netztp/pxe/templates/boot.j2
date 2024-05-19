@@ -15,8 +15,8 @@ kernel ${base-url}/debian/{{ boot }}/linux initrd=initrd.gz auto=true priority=c
 initrd ${base-url}/debian/{{ boot }}/initrd.gz
 
 {% elif boot.startswith('talos') %}
-kernel ${base-url}/talos/{{ boot }}/vmlinuz initrd=initramfs.xz net.ifnames=0 biosdevname=0 talos.platform=metal slab_nomerge pti=on ip=dhcp talos.config={{ config_url }}
-initrd ${base-url}/talos/{{ boot }}/initramfs.xz
+kernel ${base-url}/talos/{{ boot }}/kernel-amd64 talos.platform=metal talos.config={{ config_url }} net.ifnames=0 biosdevname=0 console=ttyS0 console=tty0 init_on_alloc=1 slab_nomerge pti=on consoleblank=0 nvme_core.io_timeout=4294967295 printk.devkmsg=on ima_template=ima-ng ima_appraise=fix ima_hash=sha512
+initrd ${base-url}/talos/{{ boot }}/initramfs-amd64.xz
 
 {% elif boot.startswith('proxmox') %}
 kernel ${base-url}/proxmox/{{ boot }}/linux26 initrd=initrd vga=791 video=vesafb:ywrap,mtrr ramdisk_size=16777216 rw quiet splash=silent
